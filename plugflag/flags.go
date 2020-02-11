@@ -1,14 +1,16 @@
-package plugins
+package plugflag
 
 import (
 	"flag"
 	"fmt"
 	"path"
+
+	"github.com/gobuffalo/plugins"
 )
 
 // CleanFlagSet sanitizes, and namespaces, flags to be used
 // when incorporating flags from other plugins.
-func CleanFlagSet(p Plugin, set *flag.FlagSet) []*flag.Flag {
+func CleanFlagSet(p plugins.Plugin, set *flag.FlagSet) []*flag.Flag {
 	var flags []*flag.Flag
 	set.VisitAll(func(f *flag.Flag) {
 		flags = append(flags, f)
@@ -18,7 +20,7 @@ func CleanFlagSet(p Plugin, set *flag.FlagSet) []*flag.Flag {
 
 // CleanFlags sanitizes, and namespaces, flags to be used
 // when incorporating flags from other plugins.
-func CleanFlags(p Plugin, flags []*flag.Flag) []*flag.Flag {
+func CleanFlags(p plugins.Plugin, flags []*flag.Flag) []*flag.Flag {
 	fls := make([]*flag.Flag, len(flags))
 	for i, f := range flags {
 		fls[i] = &flag.Flag{
@@ -31,7 +33,7 @@ func CleanFlags(p Plugin, flags []*flag.Flag) []*flag.Flag {
 	return fls
 }
 
-func name(p Plugin) string {
+func name(p plugins.Plugin) string {
 	type cmdName interface {
 		CmdName() string
 	}

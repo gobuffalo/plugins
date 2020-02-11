@@ -4,12 +4,12 @@ import (
 	"io"
 
 	"github.com/gobuffalo/plugins"
-	"github.com/gobuffalo/plugins/commands"
+	"github.com/gobuffalo/plugins/plugcmd"
 )
 
-type Aliaser = commands.Aliaser
-type SubCommander = commands.SubCommander
-type CommandNamer = commands.Namer
+type Aliaser = plugcmd.Aliaser
+type SubCommander = plugcmd.SubCommander
+type CommandNamer = plugcmd.Namer
 type PluginScoper = plugins.Scoper
 
 // Describer is called by `Print` and can be

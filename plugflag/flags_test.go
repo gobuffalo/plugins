@@ -1,12 +1,18 @@
-package plugins
+package plugflag
 
 import (
 	"flag"
 	"testing"
 )
 
+type background string
+
+func (b background) PluginName() string {
+	return string(b)
+}
+
 func Test_CleanFlags(t *testing.T) {
-	p := back("foo")
+	p := background("foo")
 
 	flags := CleanFlags(p, []*flag.Flag{
 		{Name: "my-flag"},
@@ -26,7 +32,7 @@ func Test_CleanFlags(t *testing.T) {
 }
 
 func Test_CleanFlagSet(t *testing.T) {
-	p := back("foo")
+	p := background("foo")
 
 	set := flag.NewFlagSet("", flag.ContinueOnError)
 	set.String("my-flag", "", "")
