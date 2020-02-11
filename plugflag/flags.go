@@ -10,17 +10,17 @@ import (
 
 // CleanFlagSet sanitizes, and namespaces, flags to be used
 // when incorporating flags from other plugins.
-func CleanFlagSet(p plugins.Plugin, set *flag.FlagSet) []*flag.Flag {
+func CleanSet(p plugins.Plugin, set *flag.FlagSet) []*flag.Flag {
 	var flags []*flag.Flag
 	set.VisitAll(func(f *flag.Flag) {
 		flags = append(flags, f)
 	})
-	return CleanFlags(p, flags)
+	return Clean(p, flags)
 }
 
 // CleanFlags sanitizes, and namespaces, flags to be used
 // when incorporating flags from other plugins.
-func CleanFlags(p plugins.Plugin, flags []*flag.Flag) []*flag.Flag {
+func Clean(p plugins.Plugin, flags []*flag.Flag) []*flag.Flag {
 	fls := make([]*flag.Flag, len(flags))
 	for i, f := range flags {
 		fls[i] = &flag.Flag{

@@ -14,7 +14,7 @@ func (b background) PluginName() string {
 func Test_CleanFlags(t *testing.T) {
 	p := background("foo")
 
-	flags := CleanFlags(p, []*flag.Flag{
+	flags := Clean(p, []*flag.Flag{
 		{Name: "my-flag"},
 	})
 
@@ -36,7 +36,7 @@ func Test_CleanFlagSet(t *testing.T) {
 
 	set := flag.NewFlagSet("", flag.ContinueOnError)
 	set.String("my-flag", "", "")
-	flags := CleanFlagSet(p, set)
+	flags := CleanSet(p, set)
 
 	if len(flags) != 1 {
 		t.Fatalf("Expected %d flags, got %d", 1, len(flags))
