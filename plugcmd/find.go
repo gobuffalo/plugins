@@ -47,10 +47,8 @@ func ByCommander(f plugfind.Finder) plugfind.FinderFn {
 		if p == nil {
 			return nil
 		}
-		if c, ok := p.(Commander); ok {
-			if c.PluginName() == name {
-				return p
-			}
+		if _, ok := p.(Commander); ok {
+			return p
 		}
 		return nil
 	}
