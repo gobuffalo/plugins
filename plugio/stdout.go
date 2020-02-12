@@ -29,7 +29,7 @@ func NewOuter(r io.Writer) Outer {
 // Stdout returns a io.MultiWriter containing all
 // plugins that implement Outer. If none are found,
 // then os.Stdout is returned
-func Stdout(plugs ...plugins.Plugin) io.Writer {
+func Stdout(plugs []plugins.Plugin) io.Writer {
 	var ins []io.Writer
 
 	for _, p := range plugs {

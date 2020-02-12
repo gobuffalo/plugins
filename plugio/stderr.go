@@ -29,7 +29,7 @@ func NewErrer(r io.Writer) Errer {
 // Stderr returns a io.MultiWriter containing all
 // plugins that implement Errer. If none are found,
 // then os.Stderr is returned
-func Stderr(plugs ...plugins.Plugin) io.Writer {
+func Stderr(plugs []plugins.Plugin) io.Writer {
 	var ins []io.Writer
 
 	for _, p := range plugs {
