@@ -29,7 +29,7 @@ func NewInner(r io.Reader) Inner {
 // Stdin returns a io.MultiReader containing all
 // plugins that implement Inner. If none are found,
 // then os.Stdin is returned
-func Stdin(plugs []plugins.Plugin) io.Reader {
+func Stdin(plugs ...plugins.Plugin) io.Reader {
 	var ins []io.Reader
 
 	for _, p := range plugs {
