@@ -8,6 +8,16 @@ import (
 	"github.com/gobuffalo/plugins"
 )
 
+// SetToSlice takes a flag set and returns a slice
+// of the flags
+func SetToSlice(set *flag.FlagSet) []*flag.Flag {
+	var flags []*flag.Flag
+	set.VisitAll(func(f *flag.Flag) {
+		flags = append(flags, f)
+	})
+	return flags
+}
+
 // CleanFlagSet sanitizes, and namespaces, flags to be used
 // when incorporating flags from other plugins.
 func CleanSet(p plugins.Plugin, set *flag.FlagSet) []*flag.Flag {

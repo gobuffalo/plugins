@@ -11,6 +11,23 @@ func (b background) PluginName() string {
 	return string(b)
 }
 
+func Test_SetToSlice(t *testing.T) {
+	var help bool
+	var name string
+
+	flags := flag.NewFlagSet("test", flag.ContinueOnError)
+	flags.BoolVar(&help, "help", false, "help")
+	flags.StringVar(&name, "name", "", "name")
+
+	slice := SetToSlice(flags)
+
+	exp := 2
+	act := len(slice)
+	if act != exp {
+		t.Fatalf("Expected %d flags, got %d", exp, act)
+	}
+}
+
 func Test_CleanFlags(t *testing.T) {
 	p := background("foo")
 
