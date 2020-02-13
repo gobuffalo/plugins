@@ -72,15 +72,19 @@ func Print(w io.Writer, main plugins.Plugin) error {
 }
 
 func printPlugins(w io.Writer, main plugins.Plugin) error {
-	wp, ok := main.(PluginScoper)
-	if !ok {
+	mm := map[string]plugins.Plugin{}
+	usingPlugins(main, mm)
+	if len(mm) == 0 {
 		return nil
 	}
 
-	plugs := wp.ScopedPlugins()
-	if len(plugs) == 0 {
-		return nil
+	plugs := make([]plugins.Plugin, 0, len(mm))
+	for _, p := range mm {
+		plugs = append(plugs, p)
 	}
+	sort.Slice(plugs, func(i, j int) bool {
+		return plugs[i].PluginName() < plugs[j].PluginName()
+	})
 
 	fmt.Fprintln(w, "\nUsing Plugins:")
 	tw := tabwriter.NewWriter(w, 0, 0, 2, ' ', 0)
@@ -90,11 +94,29 @@ func printPlugins(w io.Writer, main plugins.Plugin) error {
 		if _, ok := p.(Hider); ok {
 			continue
 		}
-		fmt.Fprintf(tw, "\t%T\t%s\t%s\n", p, stringer(p), desc(p))
+		fmt.Fprintf(tw, "\t%T\t%s\t%s\n", p, p.PluginName(), desc(p))
 	}
 
 	tw.Flush()
 	return nil
+}
+
+func usingPlugins(plug plugins.Plugin, mm map[string]plugins.Plugin) {
+	if _, ok := mm[plug.PluginName()]; ok {
+		return
+	}
+	mm[plug.PluginName()] = plug
+
+	wp, ok := plug.(plugins.Scoper)
+	if !ok {
+		return
+	}
+
+	for _, p := range wp.ScopedPlugins() {
+		usingPlugins(p, mm)
+	}
+
+	return
 }
 
 func printCommands(w io.Writer, main plugins.Plugin) error {
