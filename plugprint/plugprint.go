@@ -1,9 +1,11 @@
 package plugprint
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"path"
+	"reflect"
 	"sort"
 	"strings"
 	"text/tabwriter"
@@ -88,17 +90,34 @@ func printPlugins(w io.Writer, main plugins.Plugin) error {
 
 	fmt.Fprintln(w, "\nUsing Plugins:")
 	tw := tabwriter.NewWriter(w, 0, 0, 2, ' ', 0)
-	fmt.Fprintf(tw, "\t%s\t%s\t%s\n", "Type", "Name", "Description")
-	fmt.Fprintf(tw, "\t%s\t%s\t%s\n", "----", "----", "-----------")
+	fmt.Fprintf(tw, "\t%s\t%s\t%s\n", "Name", "Description", "Type")
+	fmt.Fprintf(tw, "\t%s\t%s\t%s\n", "----", "-----------", "----")
 	for _, p := range plugs {
 		if _, ok := p.(Hider); ok {
 			continue
 		}
-		fmt.Fprintf(tw, "\t%T\t%s\t%s\n", p, p.PluginName(), desc(p))
+		fmt.Fprintf(tw, "\t%s\t%s\t%s\n", p.PluginName(), desc(p), typeName(p))
 	}
 
 	tw.Flush()
 	return nil
+}
+
+func typeName(p plugins.Plugin) string {
+	rv := reflect.Indirect(reflect.ValueOf(p))
+	rt := reflect.TypeOf(rv.Interface())
+
+	bb := &bytes.Buffer{}
+
+	t := fmt.Sprintf("%T", p)
+	if strings.HasPrefix(t, "*") {
+		fmt.Fprint(bb, "*")
+		t = strings.TrimPrefix(t, "*")
+	}
+	fmt.Fprintf(bb, "%s/", path.Dir(rt.PkgPath()))
+	fmt.Fprint(bb, t)
+
+	return bb.String()
 }
 
 func usingPlugins(plug plugins.Plugin, mm map[string]plugins.Plugin) {
