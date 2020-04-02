@@ -9,7 +9,7 @@ import (
 
 // FindFromArgs uses the first arg that does not begin with `-`
 // as the name argument for Find
-func FindFromArgs(args []string, plugs []plugins.Plugin) plugins.Plugin {
+func FindFromArgs(args []string, plugs []plugins.Plugin) Commander {
 	for _, a := range args {
 		if strings.HasPrefix(a, "-") {
 			continue
@@ -20,12 +20,16 @@ func FindFromArgs(args []string, plugs []plugins.Plugin) plugins.Plugin {
 }
 
 // Find wraps the other cmd finders into a mega finder for cmds
-func Find(name string, plugs []plugins.Plugin) plugins.Plugin {
+func Find(name string, plugs []plugins.Plugin) Commander {
 	fn := plugfind.Background()
 	fn = ByAliaser(fn)
 	fn = ByNamer(fn)
 	fn = ByCommander(fn)
-	return fn.Find(name, plugs)
+	p := fn.Find(name, plugs)
+	if c, ok := p.(Commander); ok {
+		return c
+	}
+	return nil
 }
 
 // ByAliaser can be used to search plugins that implement
