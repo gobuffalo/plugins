@@ -1,6 +1,7 @@
 package plugfind
 
 import (
+	"path"
 	"testing"
 
 	"github.com/gobuffalo/plugins"
@@ -19,6 +20,7 @@ func Test_Finder(t *testing.T) {
 		plug("a"),
 		plug("b"),
 		plug("c"),
+		plug("x/y/z"),
 	}
 
 	exp := "b"
@@ -28,6 +30,17 @@ func Test_Finder(t *testing.T) {
 	}
 
 	act := p.PluginName()
+	if act != exp {
+		t.Fatalf("Expected %s, got %s", exp, act)
+	}
+
+	exp = "x/y/z"
+	p = f.Find(path.Base(exp), plugs)
+	if p == nil {
+		t.Fatalf("Expected to find plug %s", exp)
+	}
+
+	act = p.PluginName()
 	if act != exp {
 		t.Fatalf("Expected %s, got %s", exp, act)
 	}

@@ -1,6 +1,8 @@
 package plugfind
 
 import (
+	"path"
+
 	"github.com/gobuffalo/plugins"
 )
 
@@ -18,6 +20,9 @@ func Background() Finder {
 	fn := func(name string, plugs []plugins.Plugin) plugins.Plugin {
 		for _, p := range plugs {
 			if name == p.PluginName() {
+				return p
+			}
+			if name == path.Base(p.PluginName()) {
 				return p
 			}
 		}

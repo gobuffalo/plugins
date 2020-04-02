@@ -1,9 +1,32 @@
 package plugcmd
 
 import (
+	"strings"
+
 	"github.com/gobuffalo/plugins"
 	"github.com/gobuffalo/plugins/plugfind"
 )
+
+// FindFromArgs uses the first arg that does not begin with `-`
+// as the name argument for Find
+func FindFromArgs(args []string, plugs []plugins.Plugin) plugins.Plugin {
+	for _, a := range args {
+		if strings.HasPrefix(a, "-") {
+			continue
+		}
+		return Find(a, plugs)
+	}
+	return nil
+}
+
+// Find wraps the other cmd finders into a mega finder for cmds
+func Find(name string, plugs []plugins.Plugin) plugins.Plugin {
+	fn := plugfind.Background()
+	fn = ByAliaser(fn)
+	fn = ByNamer(fn)
+	fn = ByCommander(fn)
+	return fn.Find(name, plugs)
+}
 
 // ByAliaser can be used to search plugins that implement
 // Aliaser and who's alias matches the name
