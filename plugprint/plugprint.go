@@ -132,7 +132,7 @@ func usingPlugins(plug plugins.Plugin, mm map[string]plugins.Plugin) {
 	}
 
 	for _, p := range wp.ScopedPlugins() {
-		usingPlugins(p, mm)
+		mm[p.PluginName()] = p
 	}
 
 	return
