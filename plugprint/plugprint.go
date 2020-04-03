@@ -36,7 +36,7 @@ func Print(w io.Writer, main plugins.Plugin) error {
 	for i := 0; i < len(header); i++ {
 		fmt.Fprint(w, "-")
 	}
-	fmt.Fprintln(w)
+	fmt.Fprintf(w, "\n%s\n", typeName(main))
 
 	if a, ok := main.(Aliaser); ok {
 		aliases := a.CmdAliases()
