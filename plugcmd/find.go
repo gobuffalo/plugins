@@ -1,6 +1,7 @@
 package plugcmd
 
 import (
+	"path"
 	"strings"
 
 	"github.com/gobuffalo/plugins"
@@ -21,18 +22,33 @@ func FindFromArgs(args []string, plugs []plugins.Plugin) Commander {
 
 // Find wraps the other cmd finders into a mega finder for cmds
 func Find(name string, plugs []plugins.Plugin) Commander {
-	fn := plugfind.Background()
-	fn = ByAliaser(fn)
-	fn = ByNamer(fn)
-	fn = ByCommander(fn)
-	p := fn.Find(name, plugs)
-	if c, ok := p.(Commander); ok {
-		return c
+	for _, p := range plugs {
+		c, ok := p.(Commander)
+		if !ok {
+			continue
+		}
+		if n, ok := c.(Namer); ok {
+			if n.CmdName() == name {
+				return c
+			}
+		}
+
+		if n, ok := c.(Aliaser); ok {
+			for _, a := range n.CmdAliases() {
+				if a == name {
+					return c
+				}
+			}
+		}
+
+		if name == path.Base(c.PluginName()) {
+			return c
+		}
 	}
 	return nil
 }
 
-// ByAliaser can be used to search plugins that implement
+// DEPRECRATED: ByAliaser can be used to search plugins that implement
 // Aliaser and who's alias matches the name
 func ByAliaser(f plugfind.Finder) plugfind.Finder {
 	fn := func(name string, plugs []plugins.Plugin) plugins.Plugin {
@@ -50,7 +66,7 @@ func ByAliaser(f plugfind.Finder) plugfind.Finder {
 	return plugfind.FinderFn(fn)
 }
 
-// ByNamer can be used to search for plugins that implement
+// DEPRECRATED: ByNamer can be used to search for plugins that implement
 // Namer and who's CmdName matches the name
 func ByNamer(f plugfind.Finder) plugfind.Finder {
 	fn := func(name string, plugs []plugins.Plugin) plugins.Plugin {
@@ -66,7 +82,7 @@ func ByNamer(f plugfind.Finder) plugfind.Finder {
 	return plugfind.FinderFn(fn)
 }
 
-// ByCommander can be used to search for plugins that implement
+// DEPRECRATED: ByCommander can be used to search for plugins that implement
 // Commander and who's plugin name matches the name
 func ByCommander(f plugfind.Finder) plugfind.FinderFn {
 	fn := func(name string, plugs []plugins.Plugin) plugins.Plugin {
