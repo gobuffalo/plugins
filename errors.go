@@ -9,6 +9,9 @@ import (
 )
 
 func Wrap(p Plugin, err error) error {
+	if err == nil {
+		return nil
+	}
 	return fmt.Errorf("%s (%s): %w", typeName(p), p.PluginName(), err)
 }
 
